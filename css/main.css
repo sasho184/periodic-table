@@ -5,12 +5,19 @@ html {
   font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-.grid-container {
+.container {
   display: grid;
-  grid-template-columns: repeat(18, auto);
+    grid-template-columns: repeat(3, auto);
+}
+
+.grid-container {
+  grid-column: 2;
+  display: grid;
+  grid-template-columns: repeat(18, 50px);
   grid-column-gap: 4px;
   grid-row-gap: 4px;
-  justify-content: center;
+  width: 964;
+  margin: auto;
 }
 
 .grid-item {

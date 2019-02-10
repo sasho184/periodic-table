@@ -5,7 +5,6 @@ var debug = 0;
 //createTable() loads after body and creates the main table
 function createTable() {
   var table = document.getElementById('table');
-  table.innerHTML = "";
   // function for appending empty rows
   // numAfter - after which box
   // ammount - ammount of boxes
