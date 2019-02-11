@@ -47,6 +47,13 @@ function createTable() {
         item.className = "grid-item " + name + x;
         var box = document.createElement("div")
         box.className = "EmptyBox " + name + x;
+        if (debug != 2) {
+          if (name == "y1") {
+            box.innerHTML = "*";
+          } else if (name == "y2") {
+            box.innerHTML = "**";
+          }
+        }
         item.appendChild(box);
         table.appendChild(item);
       }
@@ -60,17 +67,15 @@ function createTable() {
     var box = document.createElement("div")
     box.className = "box b" + b;
     box.id = "b" + b
-
     //adds number for debugging if true
-    if (debug) {
+    if (debug == 1) {
       var textnode = document.createTextNode(b);
       box.appendChild(textnode);
     }
-    // box.appendChild(symbol);
     item.appendChild(box);
     table.appendChild(item);
   }
-  
+
   //creates table
   for (i = 1; i < 119; i++) {
     //append first empty row
@@ -92,13 +97,15 @@ function createTable() {
     //append empty row between (12) and (13)
     addEmptyBox(12, 10, "x");
     //append empty box after (56)
-    addEmptyBox(56, 1, "y");
+    addEmptyBox(56, 1, "y1");
     //append empty box after (88)
-    addEmptyBox(88, 1, "y");
+    addEmptyBox(88, 1, "y2");
     //append empty box after (y1) and row after (88)
-    addEmptyBox(88, 36, "x");
+    addEmptyBox(88, 35, "x");
+    addEmptyBox(88, 1, "y1");
     //appends last 3 empty boxes in front of (89)
-    addEmptyBox(103, 3, "x");
+    addEmptyBox(103, 2, "x");
+    addEmptyBox(103, 1, "y2");
     //skips to (71) after (56) to create a gap
     if (i == 56) {
       i = 71;

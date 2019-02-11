@@ -26,6 +26,7 @@ html {
   width: 50px;
   text-align: center;
   /* background-color: rgba(255, 255, 255, 0.03); */
+  /* background: #5d7027; */
 }
 
 .box {
@@ -36,6 +37,7 @@ html {
   background: #5d7027;
   font-weight: 500;
   color: #D9D9D9;
+  /* background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0)); */
 }
 
 /* sets atomic_mass size */
@@ -46,13 +48,23 @@ html {
   bottom: 8px;
 }
 
+.y10, .y20 {
+  background: #2a1a44;
+  border-radius: 25%;
+  color: #D9D9D9;
+  font-size: 25px;
+  line-height: 50px;
+}
+
 /* sets colors for the boxes */
 .b1, .b6, .b7, .b8, .b15, .b16, .b34 {
   background: #A10000;
+  /* background: linear-gradient(rgba(181, 20, 20, 1), rgba(161, 0, 0, 0.5)); */
 }
 
 .b3, .b11, .b19, .b37, .b55, .b87 {
   background: #876C4A;
+  /* background: linear-gradient(rgba(155,128,94, 1), rgba(135,108,74, 0.5)) */
 }
 
 .b4, .b12, .b20, .b38, .b56, .b88 {
