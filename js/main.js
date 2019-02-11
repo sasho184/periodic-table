@@ -2,8 +2,39 @@ var table;
 var b;
 var debug = 0;
 
-//createTable() loads after body and creates the main table
+//onLoad() loads after body
+function onLoad() {
+  createTable();
+  console.log("createTable() done");
+  getJsonData();
+  console.log("getJson() done");
+}
+
+//function for getting json data from Periodic-Table-JSON and setting values inside boxes
+function getJsonData() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var jsonData = JSON.parse(xhttp.responseText);
+      //does not set box text if debug is on
+      if (!debug) {
+        //setting values inside boxes from json
+        for (i = 1; i < 104; i++) {
+          var box = document.getElementById('b' + i);
+          //sets number symbol and atomic mass
+          box.innerHTML = jsonData.elements[i - 1].number + '<br>' + jsonData.elements[i - 1].symbol + '<br> <span class="mass">' + jsonData.elements[i - 1].atomic_mass.toFixed(3) + '</span>';
+        }
+      }
+    }
+  };
+  //json link
+  xhttp.open("GET", "https://sasho184.github.io/Periodic-Table-JSON/PeriodicTableJSON.json", true);
+  xhttp.send();
+}
+
+//createTable() creates the main table
 function createTable() {
+
   var table = document.getElementById('table');
   // function for appending empty rows
   // numAfter - after which box
@@ -21,20 +52,25 @@ function createTable() {
       }
     }
   }
+
   //function for appending boxes
   function addBoxes() {
     var item = document.createElement("div");
     item.className = "grid-item " + b;
     var box = document.createElement("div")
     box.className = "box b" + b;
+    box.id = "b" + b
+
     //adds number for debugging if true
     if (debug) {
       var textnode = document.createTextNode(b);
       box.appendChild(textnode);
     }
+    // box.appendChild(symbol);
     item.appendChild(box);
     table.appendChild(item);
   }
+  
   //creates table
   for (i = 1; i < 119; i++) {
     //append first empty row

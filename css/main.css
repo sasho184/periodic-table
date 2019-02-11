@@ -2,12 +2,13 @@ html {
   height: 100%;
   /*background: #100a1c;*/
   background-image: radial-gradient(60% 80% ellipse at center top, #201e40 0%, rgba(0, 0, 0, 0) 100%), radial-gradient(60% 80% ellipse at center bottom, #201e40 0%, #100a1c 100%);
-  font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif; */
+  font-family: 'Roboto', sans-serif;
 }
 
 .container {
   display: grid;
-    grid-template-columns: repeat(3, auto);
+  grid-template-columns: repeat(3, auto);
 }
 
 .grid-container {
@@ -33,6 +34,16 @@ html {
   width: 50px;
   border-radius: 25%;
   background: #5d7027;
+  font-weight: 500;
+  color: #D9D9D9;
+}
+
+/* sets atomic_mass size */
+.mass {
+  margin-bottom: 5px;
+  font-size: 11px;
+  position: relative;
+  bottom: 8px;
 }
 
 /* sets colors for the boxes */
