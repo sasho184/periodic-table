@@ -8,10 +8,12 @@ function onLoad() {
   console.log("createTable() done");
   getJsonData();
   console.log("getJson() done");
+  setOnClick();
+  console.log("setOnClick() done");
 }
 
 //function for getting json data from Periodic-Table-JSON and setting values inside boxes
-function getJsonData() {
+function getJsonData(id, one) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
@@ -19,9 +21,14 @@ function getJsonData() {
       //does not set box text if debug is on
       if (!debug) {
         //setting values inside boxes from json
-        for (i = 1; i < 104; i++) {
-          var box = document.getElementById('b' + i);
-          //sets number symbol and atomic mass
+        if (!one) {
+          for (i = 1; i < 104; i++) {
+            var box = document.getElementById('b' + i);
+            //sets number symbol and atomic mass
+            box.innerHTML = '<span class="number">' + jsonData.elements[i - 1].number + '</span><br><span class="symbol">' + jsonData.elements[i - 1].symbol + '</span><br><span class="mass">' + jsonData.elements[i - 1].atomic_mass.toFixed(3) + '</span>';
+          }
+        } else {
+          var box = document.getElementById(id);
           box.innerHTML = '<span class="number">' + jsonData.elements[i - 1].number + '</span><br><span class="symbol">' + jsonData.elements[i - 1].symbol + '</span><br><span class="mass">' + jsonData.elements[i - 1].atomic_mass.toFixed(3) + '</span>';
         }
       }
@@ -32,9 +39,49 @@ function getJsonData() {
   xhttp.send();
 }
 
+function fillJsonData() {
+
+}
+
+function setOnClick() {
+  for (i = 1; i < 104; i++) {
+    try {
+      // document.getElementById(i).setAttribute("ontouchstart", "reply_click(this.id)");
+      document.getElementById("b" + i).addEventListener("click", function() {
+        reply_click(this.id)
+      });
+    } catch (err) {
+      console.log("missing element");
+    }
+  }
+}
+
+
+//
+function reply_click(id) {
+
+  var infoScreen = document.getElementById("scr");
+
+  infoScreen.innerHTML = "";
+  console.log("clicked " + id);
+  // if on mobile
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+
+  }
+  //if on desktop
+  else {
+    console.log(infoScreen);
+    //places corresponding box on infoScreen
+    var box = document.createElement("div")
+    box.className = "info box " + id;
+    box.id = id;
+    infoScreen.appendChild(box);
+    getJsonData(id, 1);
+  }
+}
+
 //createTable() creates the main table
 function createTable() {
-
   var table = document.getElementById('table');
   // function for appending empty rows
   // numAfter - after which box
@@ -54,11 +101,10 @@ function createTable() {
             box.innerHTML = "**";
           }
         }
-        // if (x == 3){
-        //   name = "screen";
-        //   // item.className = "grid-item " + "screen";
-        //   // box.className = "EmptyBox " + "screen";
-        // }
+        if (name == "s") {
+          box.id = "scr";
+        }
+
         //adds number for debugging if true
         if (debug == 1) {
           var textnode = document.createTextNode(name + x);
@@ -69,7 +115,6 @@ function createTable() {
       }
     }
   }
-
   //function for appending boxes
   function addBoxes() {
     var item = document.createElement("div");
@@ -85,7 +130,6 @@ function createTable() {
     item.appendChild(box);
     table.appendChild(item);
   }
-
   //creates table
   for (i = 1; i < 119; i++) {
     //append first empty row
