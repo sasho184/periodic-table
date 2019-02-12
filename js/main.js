@@ -1,4 +1,4 @@
-var table;
+
 var b;
 var debug = 0;
 
@@ -13,7 +13,7 @@ function onLoad() {
 }
 
 //function for getting json data from Periodic-Table-JSON and setting values inside boxes
-function getJsonData(id, one) {
+function getJsonData(infId, one) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
@@ -22,14 +22,18 @@ function getJsonData(id, one) {
       if (!debug) {
         //setting values inside boxes from json
         if (!one) {
+          var i;
           for (i = 1; i < 104; i++) {
             var box = document.getElementById('b' + i);
             //sets number symbol and atomic mass
             box.innerHTML = '<span class="number">' + jsonData.elements[i - 1].number + '</span><br><span class="symbol">' + jsonData.elements[i - 1].symbol + '</span><br><span class="mass">' + jsonData.elements[i - 1].atomic_mass.toFixed(3) + '</span>';
           }
         } else {
-          var box = document.getElementById(id);
-          box.innerHTML = '<span class="number">' + jsonData.elements[i - 1].number + '</span><br><span class="symbol">' + jsonData.elements[i - 1].symbol + '</span><br><span class="mass">' + jsonData.elements[i - 1].atomic_mass.toFixed(3) + '</span>';
+          //sets info on info screen
+          var box = document.getElementById(infId);
+          infId = infId.substr(4) - 1;
+          console.log(infId);
+          box.innerHTML = '<span class="number">' + jsonData.elements[infId].number + '</span><br><span class="symbol">' + jsonData.elements[infId].symbol + '</span><br><span class="mass">' + jsonData.elements[infId].atomic_mass.toFixed(3) + '</span>';
         }
       }
     }
@@ -39,16 +43,14 @@ function getJsonData(id, one) {
   xhttp.send();
 }
 
-function fillJsonData() {
-
-}
-
+//sets click event on all boxes
 function setOnClick() {
+  var i;
   for (i = 1; i < 104; i++) {
     try {
       // document.getElementById(i).setAttribute("ontouchstart", "reply_click(this.id)");
       document.getElementById("b" + i).addEventListener("click", function() {
-        reply_click(this.id)
+        reply_click(this.id);
       });
     } catch (err) {
       console.log("missing element");
@@ -56,27 +58,24 @@ function setOnClick() {
   }
 }
 
-
-//
+//launches on click of a box
 function reply_click(id) {
-
+  var infId = "inf" + id;
   var infoScreen = document.getElementById("scr");
-
+  //resets info screen
   infoScreen.innerHTML = "";
-  console.log("clicked " + id);
   // if on mobile
   if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
 
   }
   //if on desktop
   else {
-    console.log(infoScreen);
     //places corresponding box on infoScreen
-    var box = document.createElement("div")
-    box.className = "info box " + id;
-    box.id = id;
-    infoScreen.appendChild(box);
-    getJsonData(id, 1);
+    var infoBox = document.createElement("div");
+    infoBox.className = "info box " + id;
+    infoBox.id = infId;
+    infoScreen.appendChild(infoBox);
+    getJsonData(infId, 1);
   }
 }
 
@@ -92,7 +91,7 @@ function createTable() {
       for (var x = 0; x < ammount; x++) {
         var item = document.createElement("div");
         item.className = "grid-item " + name + x;
-        var box = document.createElement("div")
+        var box = document.createElement("div");
         box.className = "EmptyBox " + name + x;
         if (debug != 1 && debug != 2) {
           if (name == "y1") {
@@ -119,9 +118,9 @@ function createTable() {
   function addBoxes() {
     var item = document.createElement("div");
     item.className = "grid-item " + b;
-    var box = document.createElement("div")
+    var box = document.createElement("div");
     box.className = "box b" + b;
-    box.id = "b" + b
+    box.id = "b" + b;
     //adds number for debugging if true
     if (debug == 1) {
       var textnode = document.createTextNode(b);
@@ -131,6 +130,7 @@ function createTable() {
     table.appendChild(item);
   }
   //creates table
+  var i;
   for (i = 1; i < 119; i++) {
     //append first empty row
     addEmptyBox(1, 18, "f");
