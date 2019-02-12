@@ -22,7 +22,7 @@ function getJsonData() {
         for (i = 1; i < 104; i++) {
           var box = document.getElementById('b' + i);
           //sets number symbol and atomic mass
-          box.innerHTML = jsonData.elements[i - 1].number + '<br>' + jsonData.elements[i - 1].symbol + '<br> <span class="mass">' + jsonData.elements[i - 1].atomic_mass.toFixed(3) + '</span>';
+          box.innerHTML = '<span class="number">' + jsonData.elements[i - 1].number + '</span><br><span class="symbol">' + jsonData.elements[i - 1].symbol + '</span><br><span class="mass">' + jsonData.elements[i - 1].atomic_mass.toFixed(3) + '</span>';
         }
       }
     }
@@ -47,12 +47,22 @@ function createTable() {
         item.className = "grid-item " + name + x;
         var box = document.createElement("div")
         box.className = "EmptyBox " + name + x;
-        if (debug != 2) {
+        if (debug != 1 && debug != 2) {
           if (name == "y1") {
             box.innerHTML = "*";
           } else if (name == "y2") {
             box.innerHTML = "**";
           }
+        }
+        // if (x == 3){
+        //   name = "screen";
+        //   // item.className = "grid-item " + "screen";
+        //   // box.className = "EmptyBox " + "screen";
+        // }
+        //adds number for debugging if true
+        if (debug == 1) {
+          var textnode = document.createTextNode(name + x);
+          box.appendChild(textnode);
         }
         item.appendChild(box);
         table.appendChild(item);
@@ -91,9 +101,11 @@ function createTable() {
     //appends boxes
     addBoxes();
     //append empty row between hydrogen(1) and helium(2)
-    addEmptyBox(1, 16, "x");
+    addEmptyBox(1, 1, "x");
+    addEmptyBox(1, 1, "s");
+    addEmptyBox(1, 7, "x");
     //append empty row between (4) and (5)
-    addEmptyBox(4, 10, "x");
+    addEmptyBox(4, 2, "x");
     //append empty row between (12) and (13)
     addEmptyBox(12, 10, "x");
     //append empty box after (56)
