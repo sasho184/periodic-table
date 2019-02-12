@@ -1,7 +1,7 @@
-
-var b;
 var debug = 0;
-
+var b, onMobile;
+// checks if the webpage is open on mobile
+isOnMobile();
 //onLoad() loads after body
 function onLoad() {
   createTable();
@@ -11,7 +11,14 @@ function onLoad() {
   setOnClick();
   console.log("setOnClick() done");
 }
-
+// checks if the webpage is open on mobile
+function isOnMobile() {
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    onMobile = true;
+  }
+}
+// DONT FORGET TO REMOVE
+onMobile = false;
 //function for getting json data from Periodic-Table-JSON and setting values inside boxes
 function getJsonData(infId, one) {
   var xhttp = new XMLHttpRequest();
@@ -32,8 +39,16 @@ function getJsonData(infId, one) {
           //sets info on info screen
           var box = document.getElementById(infId);
           infId = infId.substr(4) - 1;
+          var infoText = document.createElement("div");
+          infoText.className = "infoText";
+          var name = jsonData.elements[infId].name;
+          var atomicMass = "Atomic Mass: "+ jsonData.elements[infId].atomic_mass.toFixed(3);
+          var shells = "Shells: "+ jsonData.elements[infId].shells;
+
+          infoText.innerHTML = name + "<br>" + atomicMass + "<br>" + shells;
           console.log(infId);
           box.innerHTML = '<span class="number">' + jsonData.elements[infId].number + '</span><br><span class="symbol">' + jsonData.elements[infId].symbol + '</span><br><span class="mass">' + jsonData.elements[infId].atomic_mass.toFixed(3) + '</span>';
+          document.getElementById("scr").appendChild(infoText);
         }
       }
     }
@@ -65,14 +80,14 @@ function reply_click(id) {
   //resets info screen
   infoScreen.innerHTML = "";
   // if on mobile
-  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+  if (onMobile) {
 
   }
   //if on desktop
   else {
     //places corresponding box on infoScreen
     var infoBox = document.createElement("div");
-    infoBox.className = "info box " + id;
+    infoBox.className = "infoBox " + id;
     infoBox.id = infId;
     infoScreen.appendChild(infoBox);
     getJsonData(infId, 1);
