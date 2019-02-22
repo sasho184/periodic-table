@@ -1,5 +1,7 @@
 var debug = 0;
 var b, onMobile;
+space = "&nbsp";
+
 // checks if the webpage is open on mobile
 isOnMobile();
 //onLoad() loads after body
@@ -42,10 +44,14 @@ function getJsonData(infId, one) {
           var infoText = document.createElement("div");
           infoText.className = "infoText";
           var name = jsonData.elements[infId].name;
-          var atomicMass = "Atomic Mass: "+ jsonData.elements[infId].atomic_mass.toFixed(3);
-          var shells = "Shells: "+ jsonData.elements[infId].shells;
+          //!!MAKE THIS PART WITHOUT USING &nbsp
+          var atomicMass = "Atomic Mass: " + space.repeat(9) + jsonData.elements[infId].atomic_mass.toFixed(3);
+          var shells = "Shells: " + space.repeat(22) + jsonData.elements[infId].shells;
 
-          infoText.innerHTML = name + "<br>" + atomicMass + "<br>" + shells;
+          var wikiLink = jsonData.elements[infId].source;
+          var wikiButton = "<div class = 'wikiLink'><a target='_blank' rel='noopener noreferrer' href='" + wikiLink + "'>Open In Wikipedia</a></div>";
+
+          infoText.innerHTML = name + "<br>" + atomicMass + "<br>" + shells + "<br>" + wikiButton;
           console.log(infId);
           box.innerHTML = '<span class="number">' + jsonData.elements[infId].number + '</span><br><span class="symbol">' + jsonData.elements[infId].symbol + '</span><br><span class="mass">' + jsonData.elements[infId].atomic_mass.toFixed(3) + '</span>';
           document.getElementById("scr").appendChild(infoText);
