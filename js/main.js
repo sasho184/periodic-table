@@ -1,17 +1,14 @@
-var debug = 0;
+const debug = 0;
 var b, onMobile;
-space = "&nbsp";
+const space = "&nbsp";
 
 // checks if the webpage is open on mobile
 isOnMobile();
 //onLoad() loads after body
 function onLoad() {
   createTable();
-  console.log("createTable() done");
   getJsonData();
-  console.log("getJson() done");
   setOnClick();
-  console.log("setOnClick() done");
 }
 // checks if the webpage is open on mobile
 function isOnMobile() {
@@ -22,39 +19,46 @@ function isOnMobile() {
 // DONT FORGET TO REMOVE
 onMobile = false;
 //function for getting json data from Periodic-Table-JSON and setting values inside boxes
-function getJsonData(infId, one) {
+function getJsonData(infId, mobile) {
   var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
+  xhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       var jsonData = JSON.parse(xhttp.responseText);
       //does not set box text if debug is on
       if (!debug) {
         //setting values inside boxes from json
-        if (!one) {
-          var i;
-          for (i = 1; i < 104; i++) {
-            var box = document.getElementById('b' + i);
+        if (!mobile) {
+          for (let i = 1; i < 104; i++) {
+            let box = document.getElementById('b' + i);
             //sets number symbol and atomic mass
             box.innerHTML = '<span class="number">' + jsonData.elements[i - 1].number + '</span><br><span class="symbol">' + jsonData.elements[i - 1].symbol + '</span><br><span class="mass">' + jsonData.elements[i - 1].atomic_mass.toFixed(3) + '</span>';
           }
-        } else {
+        } else if (mobile == "notMobile") {
+
+          //IDEA!!  make this section a function called basic info and use it for mobile and desktop so it doesnt repeat two times
+          //add a checkbox on desktop to include more info which is default on mobile
+          //add at info-window on mobile
+
           //sets info on info screen
-          var box = document.getElementById(infId);
+          let box = document.getElementById(infId);
           infId = infId.substr(4) - 1;
-          var infoText = document.createElement("div");
+          let infoText = document.createElement("div");
           infoText.className = "infoText";
-          var name = jsonData.elements[infId].name;
-          //!!MAKE THIS PART WITHOUT USING &nbsp
-          var atomicMass = "Atomic Mass: " + space.repeat(9) + jsonData.elements[infId].atomic_mass.toFixed(3);
-          var shells = "Shells: " + space.repeat(22) + jsonData.elements[infId].shells;
+          let name = jsonData.elements[infId].name;
+          //!!REMAKE THIS PART WITHOUT USING &nbsp space=&nbsp
+          let atomicMass = `Atomic Mass: ${space.repeat(9)}${jsonData.elements[infId].atomic_mass.toFixed(3)}`;
+          let shells = `Shells: ${space.repeat(22)}${jsonData.elements[infId].shells}`;
 
-          var wikiLink = jsonData.elements[infId].source;
-          var wikiButton = "<div class = 'wikiLink'><a target='_blank' rel='noopener noreferrer' href='" + wikiLink + "'>Open In Wikipedia</a></div>";
+          let wikiLink = jsonData.elements[infId].source;
+          let wikiButton = `<div class = 'wikiLink'><a target='_blank' rel='noopener noreferrer' href='${wikiLink}'>Open In Wikipedia</a></div>`;
 
-          infoText.innerHTML = name + "<br>" + atomicMass + "<br>" + shells + "<br>" + wikiButton;
+          infoText.innerHTML = `${name}<br>${atomicMass}<br>${shells}<br>${wikiButton}`;
           console.log(infId);
-          box.innerHTML = '<span class="number">' + jsonData.elements[infId].number + '</span><br><span class="symbol">' + jsonData.elements[infId].symbol + '</span><br><span class="mass">' + jsonData.elements[infId].atomic_mass.toFixed(3) + '</span>';
+          box.innerHTML = `<span class="number">${jsonData.elements[infId].number}</span><br><span class="symbol">${jsonData.elements[infId].symbol}</span><br><span class="mass">${jsonData.elements[infId].atomic_mass.toFixed(3)}</span>`;
           document.getElementById("scr").appendChild(infoText);
+        } else {
+          //if on mobile
+          //look at idea above
         }
       }
     }
@@ -66,11 +70,10 @@ function getJsonData(infId, one) {
 
 //sets click event on all boxes
 function setOnClick() {
-  var i;
-  for (i = 1; i < 104; i++) {
+  for (let i = 1; i < 104; i++) {
     try {
       // document.getElementById(i).setAttribute("ontouchstart", "reply_click(this.id)");
-      document.getElementById("b" + i).addEventListener("click", function() {
+      document.getElementById("b" + i).addEventListener("click", function () {
         reply_click(this.id);
       });
     } catch (err) {
@@ -81,8 +84,8 @@ function setOnClick() {
 
 //launches on click of a box
 function reply_click(id) {
-  var infId = "inf" + id;
-  var infoScreen = document.getElementById("scr");
+  let infId = "inf" + id;
+  let infoScreen = document.getElementById("scr");
   //resets info screen
   infoScreen.innerHTML = "";
   // if on mobile
@@ -92,28 +95,28 @@ function reply_click(id) {
   //if on desktop
   else {
     //places corresponding box on infoScreen
-    var infoBox = document.createElement("div");
+    let infoBox = document.createElement("div");
     infoBox.className = "infoBox " + id;
     infoBox.id = infId;
     infoScreen.appendChild(infoBox);
-    getJsonData(infId, 1);
+    getJsonData(infId, "notMobile");
   }
 }
 
 //createTable() creates the main table
 function createTable() {
-  var table = document.getElementById('table');
+  let table = document.getElementById('table');
   // function for appending empty rows
   // numAfter - after which box
   // ammount - ammount of boxes
   // name - class to be added
   function addEmptyBox(numAfter, ammount, name) {
     if (i == numAfter) {
-      for (var x = 0; x < ammount; x++) {
-        var item = document.createElement("div");
-        item.className = "grid-item " + name + x;
-        var box = document.createElement("div");
-        box.className = "EmptyBox " + name + x;
+      for (let i = 0; i < ammount; i++) {
+        let item = document.createElement("div");
+        item.className = "grid-item " + name + i;
+        let box = document.createElement("div");
+        box.className = "EmptyBox " + name + i;
         if (debug != 1 && debug != 2) {
           if (name == "y1") {
             box.innerHTML = "*";
@@ -127,7 +130,7 @@ function createTable() {
 
         //adds number for debugging if true
         if (debug == 1) {
-          var textnode = document.createTextNode(name + x);
+          let textnode = document.createTextNode(name + i);
           box.appendChild(textnode);
         }
         item.appendChild(box);
@@ -137,22 +140,21 @@ function createTable() {
   }
   //function for appending boxes
   function addBoxes() {
-    var item = document.createElement("div");
+    let item = document.createElement("div");
     item.className = "grid-item " + b;
-    var box = document.createElement("div");
+    let box = document.createElement("div");
     box.className = "box b" + b;
     box.id = "b" + b;
     //adds number for debugging if true
     if (debug == 1) {
-      var textnode = document.createTextNode(b);
+      let textnode = document.createTextNode(b);
       box.appendChild(textnode);
     }
     item.appendChild(box);
     table.appendChild(item);
   }
   //creates table
-  var i;
-  for (i = 1; i < 119; i++) {
+  for (var i = 1; i < 119; i++) {
     //append first empty row
     addEmptyBox(1, 18, "f");
     //b sets class number
