@@ -1,5 +1,5 @@
 const debug = 0;
-var b, onMobile;
+let b, onMobile, tableData;
 const space = "&nbsp";
 
 // checks if the webpage is open on mobile
@@ -8,7 +8,7 @@ isOnMobile();
 //onLoad() loads after body
 function onLoad() {
   createTable();
-  getJsonData();
+  getTableData();
   setOnClick();
 }
 
@@ -18,40 +18,42 @@ function isOnMobile() {
     onMobile = true;
   }
 }
-
 // DONT FORGET TO REMOVE
 onMobile = false;
-//function for getting json data from Periodic-Table-JSON and setting values inside boxes
-function getJsonData(infId, onClick) {
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      var jsonData = JSON.parse(xhttp.responseText);
-      //does not set box text if debug is on
-      if (!debug) {
-        //setting values inside boxes from json
-        if (!onClick) {
-          for (let i = 1; i < 104; i++) {
-            let box = document.getElementById('b' + i);
-            //sets number symbol and atomic mass
-            box.innerHTML = '<span class="number">' + jsonData.elements[i - 1].number + '</span><br><span class="symbol">' + jsonData.elements[i - 1].symbol + '</span><br><span class="mass">' + jsonData.elements[i - 1].atomic_mass.toFixed(3) + '</span>';
-          }
-        } else if (onClick) {
 
-          //IDEA!!  make this section a function called show info and use it for mobile and desktop so it doesnt repeat two times
-          //add a checkbox on desktop to include more info which is default on mobile
-          //add at info-window on mobile
-          showInfo(infId, jsonData);
-        }
+function getTableData(){
+  if(localStorage.getItem('tableData') === null){// If there is no data in LS we get it with ajax and save it to LS
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", "https://sasho184.github.io/Periodic-Table-JSON/PeriodicTableJSON.json", true);
+    xhr.onload = function(){
+      if(this.status === 200){
+        tableData = JSON.parse(xhr.responseText);
+        localStorage.setItem('tableData', JSON.stringify(tableData)); // If there is no data in LS we get it with ajax and save it to LS
+        setBoxes(); // sets values in boxes
       }
     }
-  };
-  //json link
-  xhttp.open("GET", "https://sasho184.github.io/Periodic-Table-JSON/PeriodicTableJSON.json", true);
-  xhttp.send();
+    xhr.onerror = function(){
+      console.log('Request error...');
+    }
+    xhr.send();
+  }else{// If there is data in LS we save it to tableData
+    tableData = JSON.parse(localStorage.getItem('tableData'));
+    setBoxes(); // sets values in boxes
+  }
 }
 
-function showInfo(infId, jsonData){
+function setBoxes(debug){
+  if (!debug) {
+    //setting values inside boxes from tableData
+      for (let i = 1; i < 104; i++) {
+        let box = document.getElementById('b' + i);
+        //sets number symbol and atomic mass
+        box.innerHTML = '<span class="number">' + tableData.elements[i - 1].number + '</span><br><span class="symbol">' + tableData.elements[i - 1].symbol + '</span><br><span class="mass">' + tableData.elements[i - 1].atomic_mass.toFixed(3) + '</span>';
+      }
+  }
+}
+
+function showInfo(infId, tableData){
   if(onMobile){
     // Show info on the screen if on mobile
   }else{
@@ -60,20 +62,19 @@ function showInfo(infId, jsonData){
     infId = infId.substr(4) - 1;
     let infoText = document.createElement("div");
     infoText.className = "infoText";
-    let name = jsonData.elements[infId].name;
+    let name = tableData.elements[infId].name;
     //!!REMAKE THIS PART WITHOUT USING &nbsp space=&nbsp
-    let atomicMass = `Atomic Mass: ${space.repeat(9)}${jsonData.elements[infId].atomic_mass.toFixed(3)}`;
-    let shells = `Shells: ${space.repeat(22)}${jsonData.elements[infId].shells}`;
+    let atomicMass = `Atomic Mass: ${space.repeat(5)}${tableData.elements[infId].atomic_mass.toFixed(3)}`;
+    let shells = `Shells: ${space.repeat(18)}${tableData.elements[infId].shells}`;
     
-    let wikiLink = jsonData.elements[infId].source;
+    let wikiLink = tableData.elements[infId].source;
     let wikiButton = `<div class = 'wikiLink'><a target='_blank' rel='noopener noreferrer' href='${wikiLink}'>Open In Wikipedia</a></div>`;
     
     infoText.innerHTML = `${name}<br>${atomicMass}<br>${shells}<br>${wikiButton}`;
     //infoText.innerHTML = name + '<br>' + atomicMass + '<br>' + shells + '<br>' + wikiButton;
     //infoText.appendChild(wikiButton);
 
-    console.log(infId);
-    box.innerHTML = `<span class="number">${jsonData.elements[infId].number}</span><br><span class="symbol">${jsonData.elements[infId].symbol}</span><br><span class="mass">${jsonData.elements[infId].atomic_mass.toFixed(3)}</span>`;
+    box.innerHTML = `<span class="number">${tableData.elements[infId].number}</span><br><span class="symbol">${tableData.elements[infId].symbol}</span><br><span class="mass">${tableData.elements[infId].atomic_mass.toFixed(3)}</span>`;
     document.getElementById("scr").appendChild(infoText);
   }
 }
@@ -103,7 +104,7 @@ function reply_click(e) {
     infoBox.className = "infoBox " + boxId;
     infoBox.id = infId;
     infoScreen.appendChild(infoBox);
-    getJsonData(infId, true);
+    showInfo(infId, tableData);
   }
 }
 
