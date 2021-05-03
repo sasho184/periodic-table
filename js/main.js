@@ -24,9 +24,9 @@ function isOnMobile() {
 function getTableData() {
   if (localStorage.getItem('tableData') === null) {// If there is no data in LS we get it with ajax and save it to LS
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", "https://sasho184.github.io/Periodic-Table-JSON/PeriodicTableJSON.json", true);
-    xhr.onload = function () {
-      if (this.status === 200) {
+    xhr.open("GET", "https://abarakov.com/Periodic-Table-JSON/PeriodicTableJSON.json", true);
+    xhr.onload = function(){
+      if(this.status === 200){
         tableData = JSON.parse(xhr.responseText);
         localStorage.setItem('tableData', JSON.stringify(tableData)); // If there is no data in LS we get it with ajax and save it to LS
         setBoxes(); // sets values in boxes
