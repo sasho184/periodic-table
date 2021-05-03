@@ -11,6 +11,7 @@ html {
 }
 
 body{
+  -webkit-tap-highlight-color: transparent;
   position: relative;
   background-image: radial-gradient(60% 80% ellipse at center top, #201e40 0%, rgba(0, 0, 0, 0) 100%), radial-gradient(60% 80% ellipse at center bottom, #201e40 0%, #100a1c 100%);
   background-repeat: no-repeat;
