@@ -19,69 +19,115 @@ function isOnMobile() {
   }
 }
 // DONT FORGET TO REMOVE
-onMobile = false;
+// onMobile = false;
 
-function getTableData(){
-  if(localStorage.getItem('tableData') === null){// If there is no data in LS we get it with ajax and save it to LS
+function getTableData() {
+  if (localStorage.getItem('tableData') === null) {// If there is no data in LS we get it with ajax and save it to LS
     const xhr = new XMLHttpRequest();
     xhr.open("GET", "https://sasho184.github.io/Periodic-Table-JSON/PeriodicTableJSON.json", true);
-    xhr.onload = function(){
-      if(this.status === 200){
+    xhr.onload = function () {
+      if (this.status === 200) {
         tableData = JSON.parse(xhr.responseText);
         localStorage.setItem('tableData', JSON.stringify(tableData)); // If there is no data in LS we get it with ajax and save it to LS
         setBoxes(); // sets values in boxes
       }
     }
-    xhr.onerror = function(){
+    xhr.onerror = function () {
       console.log('Request error...');
     }
     xhr.send();
-  }else{// If there is data in LS we save it to tableData
+  } else {// If there is data in LS we save it to tableData
     tableData = JSON.parse(localStorage.getItem('tableData'));
     setBoxes(); // sets values in boxes
   }
 }
 
-function setBoxes(debug){
+function setBoxes(debug) {
   if (!debug) {
     //setting values inside boxes from tableData
-      for (let i = 1; i < 104; i++) {
-        let box = document.getElementById('b' + i);
-        //sets number symbol and atomic mass
-        box.innerHTML = '<span class="number">' + tableData.elements[i - 1].number + '</span><br><span class="symbol">' + tableData.elements[i - 1].symbol + '</span><br><span class="mass">' + tableData.elements[i - 1].atomic_mass.toFixed(3) + '</span>';
-      }
+    for (let i = 1; i < 104; i++) {
+      let box = document.getElementById('b' + i);
+      //sets number symbol and atomic mass
+      box.innerHTML = '<span class="number">' + tableData.elements[i - 1].number + '</span><br><span class="symbol">' + tableData.elements[i - 1].symbol + '</span><br><span class="mass">' + tableData.elements[i - 1].atomic_mass.toFixed(3) + '</span>';
+    }
   }
 }
 
-function showInfo(infId, tableData){
-  if(onMobile){
+// !!! Create a DOM object outside and just edit it for mobile and desktop instead of making a new one everytime !!!
+
+function showInfo(boxId, infId, tableData) {
+  if (onMobile) {
     // Show info on the screen if on mobile
-  }else{
-    // Shows info on center of the table if on desktop
-    let box = document.getElementById(infId);
+    let mobileInfoScreen = document.createElement('div');
+    mobileInfoScreen.classList.add('mobile-info-screen');
+    let centerDiv = `<div class="center"></div>`;
+    mobileInfoScreen.innerHTML = centerDiv;
+
+    document.querySelector('body').appendChild(mobileInfoScreen);
+
+    let infoBox = document.getElementById(boxId).cloneNode(true);
+    infoBox.id = infId;
+    infoBox.classList.remove('box');
+    infoBox.classList.add('infoBox');
+    
+
     infId = infId.substr(4) - 1;
     let infoText = document.createElement("div");
     infoText.className = "infoText";
-    let name = tableData.elements[infId].name;
+    let atomicMass = `Atomic Mass: ${tableData.elements[infId].atomic_mass.toFixed(3)}`;
+    let shells = `Shells: ${tableData.elements[infId].shells}`;
+
+    let wikiLink = tableData.elements[infId].source;
+    let wikiButton = `<div class='wikiLink'><a target='_blank' rel='noopener noreferrer' href='${wikiLink}'>Open In Wikipedia</a></div>`;
+
+    infoText.innerHTML = `${name}<br>${atomicMass}<br>${shells}<br>${wikiButton}`;
+
+    let closeBtn = document.createElement('div');
+    closeBtn.classList.add('close');
+    closeBtn.innerHTML = 'Close';
+    
+    mobileInfoScreen.querySelector('.center').appendChild(infoBox);
+    mobileInfoScreen.querySelector('.center').appendChild(infoText);
+    mobileInfoScreen.querySelector('.center').appendChild(closeBtn);
+    
+    document.querySelector('.close').addEventListener('click', function(){
+      document.querySelector('.mobile-info-screen').remove();
+    });
+
+  } else {
+    const infoScreen = document.getElementById("scr");
+    //resets info screen
+    infoScreen.innerHTML = "";
+
+    let infoBox = document.getElementById(boxId).cloneNode(true);
+    infoBox.id = infId;
+    infoBox.classList.remove('box');
+    infoBox.classList.add('infoBox');
+    // mobileInfoScreen.appendChild(infoBox);
+
+    
+
+    // Shows info on center of the table if on desktop
+    infId = infId.substr(4) - 1;
+    let infoText = document.createElement("div");
+    infoText.className = "infoText";
     //!!REMAKE THIS PART WITHOUT USING &nbsp space=&nbsp
     let atomicMass = `Atomic Mass: ${space.repeat(5)}${tableData.elements[infId].atomic_mass.toFixed(3)}`;
     let shells = `Shells: ${space.repeat(18)}${tableData.elements[infId].shells}`;
-    
+
     let wikiLink = tableData.elements[infId].source;
     let wikiButton = `<div class = 'wikiLink'><a target='_blank' rel='noopener noreferrer' href='${wikiLink}'>Open In Wikipedia</a></div>`;
-    
-    infoText.innerHTML = `${name}<br>${atomicMass}<br>${shells}<br>${wikiButton}`;
-    //infoText.innerHTML = name + '<br>' + atomicMass + '<br>' + shells + '<br>' + wikiButton;
-    //infoText.appendChild(wikiButton);
 
-    box.innerHTML = `<span class="number">${tableData.elements[infId].number}</span><br><span class="symbol">${tableData.elements[infId].symbol}</span><br><span class="mass">${tableData.elements[infId].atomic_mass.toFixed(3)}</span>`;
+    infoText.innerHTML = `${name}<br>${atomicMass}<br>${shells}<br>${wikiButton}`;
+
+    infoScreen.appendChild(infoBox);
     document.getElementById("scr").appendChild(infoText);
   }
 }
 
 //sets click event on all boxes
 
-function setOnClick(){
+function setOnClick() {
   document.getElementById('table').addEventListener("click", reply_click);
 }
 
@@ -89,22 +135,14 @@ function setOnClick(){
 function reply_click(e) {
   let eventTarget = e.target;
 
-  if(e.target.parentElement.classList.contains('box')){
+  if (e.target.parentElement.classList.contains('box')) {
     eventTarget = e.target.parentElement;
   }
-  
-  if(eventTarget.classList.contains('box')){
-    let boxId = eventTarget.id;
-    let infId = "inf" + boxId;
-    let infoScreen = document.getElementById("scr");
-    //resets info screen
-    infoScreen.innerHTML = "";
-    //places corresponding box on infoScreen
-    let infoBox = document.createElement("div");
-    infoBox.className = "infoBox " + boxId;
-    infoBox.id = infId;
-    infoScreen.appendChild(infoBox);
-    showInfo(infId, tableData);
+
+  if (eventTarget.classList.contains('box')) {
+    const boxId = eventTarget.id;
+    const infId = "inf" + boxId;
+    showInfo(boxId, infId, tableData);
   }
 }
 
@@ -160,7 +198,7 @@ function createTable() {
   // numAfter - after which box
   // ammount - ammount of boxes
   // name - class to be added
-  
+
   for (var i = 1; i < 119; i++) {
     //append first empty row
     addEmptyBox(1, 18, "f", i);
@@ -185,7 +223,7 @@ function createTable() {
     //append empty box after (56)
     addEmptyBox(56, 1, "y1", i);
     //append empty box after (88)
-    addEmptyBox(88, 1, "y2" ,i);
+    addEmptyBox(88, 1, "y2", i);
     //append empty box after (y1) and row after (88)
     addEmptyBox(88, 35, "x", i);
     addEmptyBox(88, 1, "y1", i);
